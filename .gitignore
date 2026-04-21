@@ -1,0 +1,97 @@
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Local per-deployment encryption salts (generated at runtime)
+.encryption_salt
+.field_encryption_salt
+
+# Virtual environment
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Media and static files (in production, these would be served by CDN/S3)
+media/
+staticfiles/
+static/
+
+# Logs
+logs/
+*.log
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+
+# Testing
+.pytest_cache/
+.tox/
+
+# Documentation
+docs/_build/
+
+# Backup files
+*.bak
+*.backup
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+
+# Node modules (if using frontend tools)
+node_modules/
+npm-debug.log*
+
+# Python
+*.egg-info/
+dist/
+build/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Redis dump
+dump.rdb
+
+# Elasticsearch data
+elasticsearch/
+
+# Local development overrides
+docker-compose.override.yml
+local.py
