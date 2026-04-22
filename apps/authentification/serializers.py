@@ -1,4 +1,4 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model,authenticate
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from django.utils.translation import gettext_lazy as _
@@ -10,12 +10,13 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'email', 'first_name', 'last_name', 'principal_currency']
 
+
 class UserRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True,validators=[validate_password],style={'input_type':'password'})
     password_confirm = serializers.CharField(write_only=True,validators=[validate_password])
     class Meta:
         model = User
-        fields = ['username', 'email', 'first_name', 'last_name', 'principal_currency']
+        fields = ['username', 'email', 'first_name', 'last_name', 'principal_currency', 'password', 'password_confirm']
 
         extra_kwargs = {
             'principal_currency': {"required":True},
@@ -40,4 +41,37 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             password = password,
             **validated_data)
         return user
+
+class UserLoginSerializer(serializers.Serializer):
+    username = serializers.CharField(write_only=True,required=True)
+    password = serializers.CharField(write_only=True,required=True,style={'input_type':'password'})
+
+    user = None
+
+    def validate(self,attrs):
+        username = attrs.get('username')
+        password = attrs.get('password')
+
+        if username and password:
+            try:
+                user_obj = User.objects.get(username=username)
+            except User.DoesNotExist:
+                try:
+                    user_obj = User.objects.get(email=username)
+                except User.DoesNotExist:
+                    raise serializers.ValidationError(_("No user found with this username or email"))
+
+            user = authenticate(username=user_obj.email, password=password)
+            if not user:
+                raise serializers.ValidationError(_("Incorrect username or password"))
+            self.user = user
+            attrs['user'] = user
+            return attrs
+        else:
+            raise serializers.ValidationError(_("Please enter username and password"))
+
+
+
+
+
 

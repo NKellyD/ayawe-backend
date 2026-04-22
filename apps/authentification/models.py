@@ -23,11 +23,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=100, unique=True)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    email = models.EmailField()
+    email = models.EmailField(unique=True)
     class CurrencyTypes(models.TextChoices):
-        BIF = 'BIF', 'Franc Burundais'
-        USD = 'Dollar', 'dollar'
-        EUR = 'Euro', 'euro'
+        BIF = 'BIF', 'BIF'
+        USD = 'USD', 'USD'
+        EUR = 'EUR', 'EUR'
     principal_currency = models.CharField(choices=CurrencyTypes.choices, max_length=50,default=CurrencyTypes.BIF)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -39,3 +39,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
+from django.db import models
+
+# Create your models here.
