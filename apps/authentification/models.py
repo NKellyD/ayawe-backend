@@ -39,6 +39,4 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
-from django.db import models
 
-# Create your models here.
