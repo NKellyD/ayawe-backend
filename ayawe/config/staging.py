@@ -2,7 +2,6 @@ from decouple import Csv, config
 
 from .base import *  # noqa: F403,F401
 
-# Staging should be close to production while still allowing controlled debug toggling
 DEBUG = config("DEBUG", default=False, cast=bool)
 ALLOWED_HOSTS = config(
     "ALLOWED_HOSTS", default="staging.localhost,localhost,127.0.0.1", cast=Csv()
