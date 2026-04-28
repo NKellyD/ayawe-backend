@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'ayawe.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DB_NAME = config('DB_NAME')
+DB_NAME = config('DB_NAME', default=None)
 
 if DB_NAME:
     DATABASES = {
