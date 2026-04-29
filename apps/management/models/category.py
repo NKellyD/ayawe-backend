@@ -1,16 +1,17 @@
 from django.db import models
 
-class CategoryType(models.Model):
-    class CategoryTypeName(models.TextChoices):
-        EXPENSES = 'E', 'Expenses'
-        INCOMES = 'I', 'Incomes'
-    name = models.CharField(choices=CategoryTypeName.choices,max_length=255,default=CategoryTypeName.EXPENSES)
-    def __str__(self):
-        return self.name
-
 class Category(models.Model):
-    name = models.CharField(max_length=255, unique=True)
-    type = models.ForeignKey(CategoryType, on_delete=models.CASCADE)
-    icon_name = models.CharField(max_length=255)
+    EXPENSE = 'expense'
+    INCOME = 'income'
+
+    TYPE_CHOICES = [
+        (EXPENSE, 'Dépense'),
+        (INCOME, 'Revenu'),
+    ]
+
+    name = models.CharField(max_length=100)
+    type = models.CharField(max_length=10, choices=TYPE_CHOICES)
+    icon_name = models.CharField(max_length=100)
+
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.get_type_display()})"

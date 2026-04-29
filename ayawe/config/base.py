@@ -27,7 +27,8 @@ SECRET_KEY = config("SECRET_KEY")
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'Kelly56.pythonanywhere.com'
+    'Kelly56.pythonanywhere.com',
+    '127.0.0.1',
 ]
 
 # Application definition

@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from .models.account import Account
-from .models.category import CategoryType,Category
+from .models.category import Category
 
 User = get_user_model()
 
@@ -21,12 +21,10 @@ class AccountSerializer(serializers.ModelSerializer):
         validated_data['user'] = user
         return super().create(validated_data)
 
-class CategoryTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CategoryType
-        fields = ['id', 'name']
 
 class CategorySerializer(serializers.ModelSerializer):
+    type_display = serializers.CharField(source='get_type_display', read_only=True)
+
     class Meta:
         model = Category
-        fields = ['id', 'name', 'type', 'icon_name']
+        fields = ['id', 'name', 'type', 'type_display', 'icon_name']
