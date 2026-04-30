@@ -17,6 +17,9 @@ class Target(models.Model):
     def amount_saved(self):
         return self.total_amount_saved
 
+    @property
+    def amount_target(self):
+        return self.target_amount
 
     def target_contribution_saved(self, amount):
         return self.total_amount_saved + amount
