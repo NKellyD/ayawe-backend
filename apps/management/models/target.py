@@ -11,7 +11,7 @@ class Target(models.Model):
     total_amount_saved = models.DecimalField(max_digits=10,decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
     start_target_date = models.DateField()
-    end_target_date = models.DateField()
+    end_target_date = models.DateField(blank=True, null=True)
 
     @property
     def amount_saved(self):
