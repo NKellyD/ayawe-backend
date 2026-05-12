@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 
 
 class AccountView(generics.ListCreateAPIView):
-    queryset = Account.objects.all()
+    queryset = Account.objects.all().order_by('-id')
     serializer_class = AccountSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -33,7 +33,7 @@ class CategoryTypeListView(APIView):
         return Response(data)
 
 class CategoryView(generics.ListCreateAPIView):
-    queryset = Category.objects.all()
+    queryset = Category.objects.all().order_by('-id')
     serializer_class = CategorySerializer
     permission_classes = [permissions.IsAuthenticated]
 
