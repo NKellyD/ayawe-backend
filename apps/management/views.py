@@ -2,7 +2,8 @@ from unicodedata import category
 
 from .models.account import Account
 from .models.category import Category
-from .serializers import AccountSerializer,CategorySerializer
+from .models.target import Target
+from .serializers import AccountSerializer,CategorySerializer,TargetSerializer
 from rest_framework.response import Response
 from rest_framework import status, generics, permissions
 from django.utils.translation import gettext_lazy as _
@@ -46,6 +47,21 @@ class CategoryView(generics.ListCreateAPIView):
             'result': CategorySerializer(category).data
         },status=status.HTTP_201_CREATED)
 
+
+class TargetView(generics.GenericAPIView):
+    serializer_class = TargetSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            return Target.objects.all().order_by('-id')
+        else:
+            return Target.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 
