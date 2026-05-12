@@ -34,4 +34,4 @@ class TargetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Target
         fields = ['id', 'name', 'target_amount', 'total_amount_saved', 'created_at', 'start_target_date', 'end_target_date']
-        read_only_fields = ['created_at', ]
+        read_only_fields = ['created_at']
