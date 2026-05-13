@@ -2,15 +2,17 @@ from unicodedata import category
 
 from .models.account import Account
 from .models.category import Category
-from .serializers import AccountSerializer,CategorySerializer
+from .models.contribution import Contribution
+from .models.target import Target
+from .serializers import AccountSerializer,CategorySerializer,TargetSerializer,ContributionSerializer
 from rest_framework.response import Response
-from rest_framework import status, generics, permissions
+from rest_framework import status, generics, permissions,viewsets,mixins
 from django.utils.translation import gettext_lazy as _
 from rest_framework.views import APIView
 
 
 class AccountView(generics.ListCreateAPIView):
-    queryset = Account.objects.all()
+    queryset = Account.objects.all().order_by('-id')
     serializer_class = AccountSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -33,7 +35,7 @@ class CategoryTypeListView(APIView):
         return Response(data)
 
 class CategoryView(generics.ListCreateAPIView):
-    queryset = Category.objects.all()
+    queryset = Category.objects.all().order_by('-id')
     serializer_class = CategorySerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -46,6 +48,34 @@ class CategoryView(generics.ListCreateAPIView):
             'result': CategorySerializer(category).data
         },status=status.HTTP_201_CREATED)
 
+
+class TargetView(viewsets.ModelViewSet):
+    serializer_class = TargetSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            return Target.objects.filter().order_by('-id')
+        else:
+            return Target.objects.filter(user=self.request.user).order_by('-id')
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class ContributionView(viewsets.ModelViewSet):
+    serializer_class = ContributionSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            return Contribution.objects.filter().order_by('-id')
+        else:
+            return Contribution.objects.filter(created_by=self.request.user).order_by('-id')
+
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user)
 
 
 
