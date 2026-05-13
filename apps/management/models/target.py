@@ -1,7 +1,5 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-from datetime import date
-from django.core.exceptions import ValidationError
 from decimal import Decimal
 from django.db.models import Sum
 
