@@ -4,25 +4,37 @@ from .models.contribution import Contribution
 from .models.target import Target
 from .serializers import AccountSerializer,CategorySerializer,TargetSerializer,ContributionSerializer
 from rest_framework.response import Response
-from rest_framework import status, generics, permissions,viewsets
+from rest_framework import status, generics, permissions, viewsets, request
 from django.utils.translation import gettext_lazy as _
 from rest_framework.views import APIView
 
 
-class AccountView(generics.ListCreateAPIView):
-    queryset = Account.objects.all().order_by('-id')
-    serializer_class = AccountSerializer
-    permission_classes = [permissions.IsAuthenticated]
+# class AccountView(generics.ListCreateAPIView):
+#     queryset = Account.objects.all()
+#     serializer_class = AccountSerializer
+#     permission_classes = [permissions.IsAuthenticated]
+#
+#     def post(self, request, *args, **kwargs):
+#         serializer = self.get_serializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         account = serializer.save()
+#
+#         return Response({
+#             'message': (_('Account successfully created.')),
+#             'result': AccountSerializer(account).data
+#         },status=status.HTTP_201_CREATED)
 
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        account = serializer.save()
+class AccountView(viewsets.ModelViewSet):
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            return Account.objects.all()
+        else:
+            return Account.objects.filter(user=self.request.user)
 
-        return Response({
-            'message': (_('Account successfully created.')),
-            'result': AccountSerializer(account).data
-        },status=status.HTTP_201_CREATED)
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
 
 class CategoryTypeListView(APIView):
     def get(self, request):

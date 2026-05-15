@@ -1,7 +1,10 @@
+import uuid
+
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from django.utils.translation import gettext_lazy as _
 from datetime import date
+from uuid import uuid4
 from .models.account import Account
 from .models.category import Category
 from .models.target import Target
@@ -13,14 +16,29 @@ class AccountSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Account
-        fields = ['id', 'name', 'amount', 'currency', 'type_account', 'date_created']
-        read_only_fields = ['date_created']
+        fields = ['id', 'name', 'amount', 'currency', 'type_account','account_number','is_active', 'date_created','updated_at']
+        read_only_fields = ['date_created','updated_at']
+
+    def validate(self, data):
+        type_account = data.get('type_account',getattr(self.instance, 'type_account', None))
+        account_number = data.get('account_number',getattr(self.instance, 'account_number', None))
+
+        if type_account == Account.TypeAccounts.MOBILE:
+            if not account_number:
+                raise serializers.ValidationError(_("Account number is required"))
+        return data
 
     def create(self, validated_data):
         user = self.context['request'].user
 
         if not validated_data.get('currency'):
             validated_data['currency'] = user.principal_currency
+
+        type_account = validated_data.get('type_account',getattr(self.instance, 'type_account', None))
+        if type_account == Account.TypeAccounts.BANK:
+            validated_data['account_number'] = (
+                f"BANK_{uuid.uuid4().hex[:6].upper()}"
+            )
 
         validated_data['user'] = user
         return super().create(validated_data)

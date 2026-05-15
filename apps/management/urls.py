@@ -6,9 +6,9 @@ from .views import AccountView,CategoryTypeListView,CategoryView,TargetView,Cont
 router = routers.DefaultRouter()
 router.register('targets', TargetView, basename='target')
 router.register('contributions', ContributionView, basename='contribution')
+router.register('accounts', AccountView, basename='account')
 
 urlpatterns = [
-    path('account/', AccountView.as_view(), name='account'),
     path('categories-type/', CategoryTypeListView.as_view(), name='categories-type'),
     path('categories/', CategoryView.as_view(), name='categories'),
     path("", include(router.urls)),

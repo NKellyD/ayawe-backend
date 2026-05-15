@@ -15,7 +15,7 @@ class Account(models.Model):
     class TypeAccounts(models.TextChoices):
         CASH = 'CASH', 'Cash'
         MOBILE = 'MOBILE', 'Mobile'
-        Bank = 'BANK', 'Bank'
+        BANK = 'BANK', 'Bank'
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='accounts')
     name = models.CharField(max_length=100)
