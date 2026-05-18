@@ -17,3 +17,6 @@ class Contribution(models.Model):
     def __str__(self):
         return str(self.target.name)
 
+    class Meta:
+        ordering = ['id']
+
