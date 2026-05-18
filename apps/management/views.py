@@ -51,9 +51,9 @@ class TargetView(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     def get_queryset(self):
         if self.request.user.is_staff:
-            return Target.objects.filter().order_by('-id')
+            return Target.objects.filter()
         else:
-            return Target.objects.filter(user=self.request.user).order_by('-id')
+            return Target.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -66,10 +66,11 @@ class ContributionView(viewsets.ModelViewSet):
     serializer_class = ContributionSerializer
     permission_classes = [permissions.IsAuthenticated]
     def get_queryset(self):
+        queryset = Contribution.objects.select_related('target','created_by')
         if self.request.user.is_staff:
-            return Contribution.objects.filter().order_by('-id')
+            return queryset
         else:
-            return Contribution.objects.filter(created_by=self.request.user).order_by('-id')
+            return queryset.filter(created_by=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)

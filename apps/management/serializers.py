@@ -69,13 +69,21 @@ class ContributionSerializer(serializers.ModelSerializer):
         target = data.get('target')
         amount = data.get('amount_to_contributed')
 
+        # if not target:
+        #     raise serializers.ValidationError(_({"target": "Target is required"}))
+        #
+        # if amount is None:
+        #     raise serializers.ValidationError(_({"amount": "Amount is required"}))
+
+
+        if amount <= 0:
+            raise serializers.ValidationError(_("Target must be greater than 0"))
+
         future_amount = target.amount_saved + amount
 
         if future_amount > target.target_amount:
             raise serializers.ValidationError(_("Target amount cannot be greater than amount saved"))
 
-        if amount <= 0:
-            raise serializers.ValidationError(_("Target must be greater than 0"))
 
         if target.end_target_date < date.today():
             raise serializers.ValidationError(_("Target date expired"))
