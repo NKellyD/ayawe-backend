@@ -33,6 +33,9 @@ class Target(models.Model):
         else:
             return round((self.amount_saved / self.target_amount) * 100, 2)
 
+    class Meta:
+        ordering = ['id']
+
 
 
 
