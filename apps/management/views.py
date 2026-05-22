@@ -14,6 +14,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 class AccountView(viewsets.ModelViewSet):
     serializer_class = AccountSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend,SearchFilter]
+    search_fields = ['username','account_number']
     def get_queryset(self):
         if self.request.user.is_staff:
             return Account.objects.all()
