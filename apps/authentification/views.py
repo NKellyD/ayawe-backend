@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils.translation import gettext_lazy as _
+
+from .models.two_factor_code import TwoFactorCode
 from .models.user_email import UserEmail
 from apps.authentification.serializers import (
     UserRegisterSerializer,
@@ -13,6 +15,9 @@ from apps.authentification.serializers import (
     AddUserEmailSerializer
 )
 from rest_framework.decorators import action
+from random import random
+from django.utils import timezone
+from datetime import timedelta
 
 User = get_user_model()
 
@@ -44,22 +49,46 @@ class UserLoginView(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
-        refresh = RefreshToken.for_user(user)
-        access_token = refresh.access_token
+
+        #access_token = refresh.access_token
+
+        if not user.two_factor_enabled:
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                "message": _("User login successfully"),
+                "result": {
+                    "id": user.id,
+                    "username": user.username,
+                    "email": user.email,
+                    "principal_currency": user.principal_currency
+                },
+                "tokens": {
+                    "access": str(refresh.access_token),
+                    "refresh": str(refresh),
+                }
+            }, status=status.HTTP_200_OK)
+
+        code = str(random.randint(1000, 9999))
+
+        TwoFactorCode.objects.filter(
+            user=user,
+            is_used=False).delete()
+
+        TwoFactorCode.objects.create(
+            user=user,
+            code=code,
+            expiration_date=timezone.now() + timedelta(minutes=5),
+        )
+
+       #send_email
 
         return Response({
-            "message": _("User login successfully"),
-            "result": {
-                "id": user.id,
-                "username": user.username,
-                "email": user.email,
-                "principal_currency": user.principal_currency
-            },
-            "tokens": {
-                "access": str(access_token),
-                "refresh": str(refresh),
-            }
-        }, status=status.HTTP_200_OK)
+
+        })
+
+
+
+
 
 class UserEmailView(ModelViewSet):
     serializer_class = UserEmailSerializer
