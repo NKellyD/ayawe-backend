@@ -78,6 +78,11 @@ class UserEmailSerializer(serializers.ModelSerializer):
         fields = ['id', 'email','is_primary', 'is_active', 'is_verified','created_at']
         read_only_fields = ['id', 'is_active', 'is_verified', 'created_at']
 
+class AddUserEmailSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    is_primary = serializers.BooleanField(default=False)
+
+
 
 
 
