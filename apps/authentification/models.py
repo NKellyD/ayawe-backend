@@ -65,7 +65,8 @@ class UserEmail(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='emails')
     email = models.EmailField(unique=True)
     is_primary = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    is_verified = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

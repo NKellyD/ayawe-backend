@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model,authenticate
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from django.utils.translation import gettext_lazy as _
+from .models import UserEmail
 
 User = get_user_model()
 
@@ -69,6 +70,13 @@ class UserLoginSerializer(serializers.Serializer):
             return attrs
         else:
             raise serializers.ValidationError(_("Please enter username and password"))
+
+
+class UserEmailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserEmail
+        fields = ['id', 'email','is_primary', 'is_active', 'is_verified','created_at']
+        read_only_fields = ['id', 'is_active', 'is_verified', 'created_at']
 
 
 
