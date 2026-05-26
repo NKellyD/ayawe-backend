@@ -1,10 +1,19 @@
 from django.contrib.auth import get_user_model
 from rest_framework import viewsets, generics, permissions,status
 from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils.translation import gettext_lazy as _
-
-from apps.authentification.serializers import UserRegisterSerializer, UserSerializer, UserLoginSerializer
+from .models import UserEmail
+from apps.authentification.serializers import (
+    UserRegisterSerializer,
+    UserSerializer,
+    UserLoginSerializer,
+    UserEmailSerializer,
+    AddUserEmailSerializer,
+    SetPrimaryEmailSerializer
+)
+from rest_framework.decorators import action
 
 User = get_user_model()
 
@@ -52,4 +61,30 @@ class UserLoginView(generics.GenericAPIView):
                 "refresh": str(refresh),
             }
         }, status=status.HTTP_200_OK)
+
+class UserEmailView(ModelViewSet):
+    queryset = User.objects.prefetch_related('emails')
+    serializer_class = None
+    permission_classes = [permissions.IsAuthenticated]
+
+    @action(detail=False, methods=['post'], url_path='add-email')
+    def add_email(self, request):
+        serializer = AddUserEmailSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = request.user.add_email(
+            user=request.user,
+            email=serializer.validated_data['email'],
+            is_primary=serializer.validated_data['is_primary'],
+        )
+        return Response({
+            "message": _("Email address added successfully"),
+            "result": {
+                "email": email.email,
+                "is_primary": email.is_primary,
+            }
+        },
+            status=status.HTTP_201_CREATED
+        )
+
+
 
