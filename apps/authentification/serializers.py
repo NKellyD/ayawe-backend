@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model,authenticate
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from django.utils.translation import gettext_lazy as _
-from .models import UserEmail
+from .models.user_email import UserEmail
 
 User = get_user_model()
 
@@ -20,7 +20,6 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         fields = ['username', 'email', 'first_name', 'last_name', 'principal_currency', 'password', 'password_confirm']
 
         extra_kwargs = {
-            'principal_currency': {"required":True},
             'password': {"required":True},
             'password_confirm': {"required":True},
         }
