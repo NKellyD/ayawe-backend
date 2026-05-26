@@ -82,6 +82,10 @@ class AddUserEmailSerializer(serializers.Serializer):
     email = serializers.EmailField()
     is_primary = serializers.BooleanField(default=False)
 
+class SetPrimaryEmailSerializer(serializers.Serializer):
+    email_id = serializers.IntegerField()
+
+
 
 
 

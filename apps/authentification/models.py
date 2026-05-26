@@ -44,21 +44,29 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @transaction.atomic
     def add_email(self, email, is_primary=False):
-        if self.emails.filter(email=email).exists():
+        if UserEmail.objects.filter(email=email).exists():
             raise ValidationError('Email address already in use')
         if is_primary:
             self.emails.update(is_primary=False)
-        return UserEmail.objects.create(user=self,email=email, is_primary=is_primary)
+        user_email = UserEmail.objects.create(user=self,email=email, is_primary=is_primary)
+        if is_primary:
+            self.email = email
+            self.save(update_fields=['email'])
+
+        return user_email
 
     @transaction.atomic
-    def set_email_primary(self, email_id):
+    def set_primary_email(self, email_id):
+        try:
+            email_obj = UserEmail.objects.get(id=email_id)
+        except UserEmail.DoesNotExist:
+            raise ValidationError('Email not found')
         self.emails.update(is_primary=False)
-        email = self.emails.get(id=email_id)
-        email.is_primary = True
-        email.save()
-        return email
-
-
+        email_obj.is_primary = True
+        email_obj.save(update_fields=['is_primary'])
+        self.email = email_obj.email
+        self.save(update_fields=['email'])
+        return email_obj
 
 
 class UserEmail(models.Model):
